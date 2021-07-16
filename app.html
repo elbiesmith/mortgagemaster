@@ -47,47 +47,86 @@
     </nav>
 
     <main class="flex-shrink-0">
-        <div class="container">
-            <div class="row">
+        <div class="container mt-3">
+            <div class="row mx-4">
+                <div class="col">
+                    <h3>Loan Calculator</h3>
+                    <div class="card bg-light pe-0">
+                        <div class="card-body pe-0">
+                            <form class="me-0 pe-0">
+                                <div class="row mb-2">
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="loanAmount" class="form-label">Loan Amount</label>
+                                            <input type="number" class="form-control" id="loanAmmount">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="loanTerm" class="form-label">Loan Term in Months</label>
 
-                <div class="col border-end border-2 p-4">
-                    <div class="row row-sizer">
-                        <h3>C-Note App</h3>
-                        <p>
-                            Count money one loop at a time. A javascript coding exercise using loops. Write a program
-                            the
-                            displays the numbers from 0 to 100. Display the even numbers in <strong>BOLD</strong>.
-                        </p>
-                    </div>
-                    <div class="row">
-                        <h5 class="border-bottom border-2">Instructions</h5>
-                        <p>Enter a starting value and a ending value. Press the button and the values will appear.</p>
+                                            <input type="number" class="form-control" id="loanTerm">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="loanRate" class="form-label">Rate</label>
+                                            <input type="number" class="form-control" id="loanRate">
+                                            <button type="button"
+                                                class="btn btn-primary mt-2 float-end" id="btnCalculate">Calculate</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
                     </div>
                 </div>
-                <div class="col p-4">
-                    <div class="row row-sizer pb-5">
-                        <h5>Enter Values</h5>
-                        <div class="col">
-                            <input type="number" class="form-control" id="startValue" placeholder="Start Value" value=0>
-                            <button id="submitBtn" class="btn btn-grn mt-1">Submit</button>
-                        </div>
-                        <div class="col">
-                            <input type="number" class="form-control" id="endValue" placeholder="End Value" value=100>
+                <div class="col text-center">
+                    <h6 class="mt-5">Your Monthly Payments</h6>
+                    <h2>$272.88</h2>
 
+                    <table class='table table-borderless'>
+                        <tbody>
+                            <tr>
+                                <td class="text-start">Total Prinicpal</td>
+                                <td id="totalPrincipal">$15,000.00</td>
+                            </tr>
+                            <tr>
+                                <td class="text-start">Total Interest</td>
+                                <td id="totalInterest">$1,372.57</td>
+                            </tr>
+                            <tr>
+                                <td class="text-start">Total Cost</td>
+                                <td><strong id="totalCost">$16,372.57</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
 
-                        </div>
-                    </div>
-                    <div class="row">
-                        <h5 class="border-bottom border-2">Results</h5>
-                        <table class="table table-striped">
-                            <tbody id='output' class="table-text-size">
-
-                            </tbody>
-
-                        </table>
-                    </div>
                 </div>
+            </div>
+            <div class="row mt-2 mx-4">
+                <div class="col">
+                    <table class="table table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">Month</th>
+                                <th scope="col">Payment</th>
+                                <th scope="col">Principal</th>
+                                <th scope="col">Interest</th>
+                                <th scope="col">Total Interest</th>
+                                <th scope="col">Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody id='resultTable'>
 
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </main>
@@ -122,15 +161,20 @@
     <script src="/js/prism.js"></script>
     <script src="/js/site.js"></script>
     <script>
-        document.getElementById("submitBtn").addEventListener("click", getValues);
-        document.getElementById("startValue").addEventListener('keypress', function (keyPressed) {
+        document.getElementById("btnCalculate").addEventListener("click", calculate);
+        document.getElementById("loanAmount").addEventListener('keypress', function (keyPressed) {
             if (keyPressed.key === "Enter") {
-                getValues();
+                calculate();
             }
         })
-        document.getElementById("endValue").addEventListener('keypress', function (keyPressed) {
+        document.getElementById("loanTerm").addEventListener('keypress', function (keyPressed) {
             if (keyPressed.key === "Enter") {
-                getValues();
+                calculate();
+            }
+        })
+        document.getElementById("loanRate").addEventListener('keypress', function (keyPressed) {
+            if (keyPressed.key === "Enter") {
+                calculate();
             }
         })
     </script>
