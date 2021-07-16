@@ -1,0 +1,54 @@
+   main>.container {
+       padding: 60px 15px 0;
+   }
+
+   .text-match {
+       color: #bfbfbf;
+   }
+
+   .text-match:hover {
+       color: gray;
+   }
+
+   .js-color {
+       color: #e2d304;
+   }
+
+   .bs-color {
+       color: #800080;
+   }
+
+   .html-color {
+       color: #ff4500;
+   }
+
+   .css-color {
+       color: #0b52d6;
+   }
+
+   .even {
+       font-weight: bold;
+   }
+
+   .odd {
+       font-weight: normal;
+   }
+
+   .row-sizer {
+       min-height: 160px;
+   }
+
+   .txt-grn {
+       color: #68807A;
+   }
+
+   .table-text-size {
+       font-size: 12px;
+   }
+
+    .sticky-footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+    }
