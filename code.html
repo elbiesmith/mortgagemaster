@@ -2,7 +2,7 @@
 <html lang="en" class="h-100">
 
 <head>
-    <title>CNote: A Coding Challenge</title>
+    <title>Mortgage Master: A Coding Challenge</title>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -20,7 +20,7 @@
 
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#"><img src="/img/logo-round-transparent.png" alt=""> C-Note</a>
+            <a class="navbar-brand" href="#"><img src="/img/logo-round-transparent.png" alt=""> Mortgage Master</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
                 aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -37,7 +37,8 @@
                         <a class="nav-link active" aria-current="page" href="/code.html">The Code</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" target="_blank" href="http://github.com/elbiesmith/CNote">Git Repo</a>
+                        <a class="nav-link" target="_blank" href="https://github.com/elbiesmith/mortgagemaster">Git
+                            Repo</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" target="_blank" href="http://elbie.me">About Me</a>
@@ -51,119 +52,150 @@
         <div class="container">
             <h1 class="border-bottom border-2">The Code</h1>
             <div class="row">
-                <div class="col">
+                <div class="col-8">
                     <pre class="line-numbers language-javascript">
                     <code class="language-javascript">
-                        function getValues() {
-                          // access the web page and get the values from the inputs
-                          let startValue = parseInt(document.getElementById("startValue").value);
-                          let endValue = parseInt(document.getElementById("endValue").value);
-                          let errorState = false;
-                          let errorMsg = "";
+                        // payment Calculation (amount * (rate / 1200)) / (1 - Math.pow(1 + rate / 1200, -term));
+                        // interest Calculation balance * (rate / 1200);
+                        let finalCost = 0;
+                        let finalInterest = 0;
+                        let principal = 0;
+                        let finalPayment = 0;
 
-                          // Verify that we have numbers
-                          if (isNaN(startValue) || isNaN(endValue)) {
-                              errorState = true;
-                              errorMsg += 'Please use a number.&lt;hr /&gt;';
-                          }
 
-                          if (startValue > endValue) {
-                              errorState = true;
-                              errorMsg += 'Please ensure that the start number is less than the end number.&lt;hr /&gt;';
-                          }
-
-                          if (startValue < -10000 || startValue> 10000 || endValue < -10000 || endValue> 10000) {
-                              errorState = true;
-                              errorMsg += 'To Save your processor, please use a range of less than 20,000&lt;hr/&gt;';
-                          }
-
-                          if (errorState) {
-                              Swal.fire({
-                                title: 'Something went wrong',
-                                html: `${errorMsg}`,
-                                type: 'error',
-                                confirmButtonText: 'OK',
-                                confirmButtonColor: '#68807A'
-                              })
-                          }
-
-                          // take the start and end values as teh bounds for a 'for' loop
-                          // that will create an array and return it.
-                          let numbers = generateNumbers(startValue, endValue);
-
-                          // take the array that was returned and pass it to a function that
-                          // will display it on the page.
-                          displayNumbers(numbers);
+                        function calcMonthlyPayment(loanAmount, loanRate, loanTerm) {
+                            return (loanAmount * (loanRate / 1200)) / (1 - Math.pow(1 + loanRate / 1200, -loanTerm));
                         }
 
-                        function generateNumbers(startValue, endValue) {
-                          let numberArray = [];
-                          for (let i = startValue; i < endValue + 1; i++) {
-                              numberArray.push(i);
-                          }
-                          return numberArray; }
+                        function calcInterest(loanBalance, loanRate) {
+                            return (loanBalance * (loanRate / 1200));
+                        }
 
-                        function displayNumbers(numberArray) {
-                          let tableBody=document.getElementById("output");
-                          tableBody.innerHTML="" ;
-                          let className='even' ;
-                          for (let i=0; i < numberArray.length; i++) {
-                              if(numberArray[i] % 2===0) {
-                                  className='even';
-                              } else {
-                                   className='odd';
-                              }
+                        function calculate() {
+                            buildTable();
+                            buildSummary();
+                            // resetForm();
+                        }
 
-                              tableBody.innerHTML += `&lt;tr&gt;&lt;td class="${className}"&gt;${numberArray[i]}&lt;/td&gt;&lt;/tr&gt;`;
-                          }
+                        function buildTable() {
+                            let resultTable = document.getElementById('resultTable');
+                            resultTable.innerHTML = '';
+                            let results = '';
+
+                            let totalPrincipal = parseFloat(document.getElementById('loanAmount').value);
+                            let loanRate = parseFloat(document.getElementById('loanRate').value);
+                            let loanTerm = parseInt(document.getElementById('loanTerm').value);
+
+                            if (isNaN(totalPrincipal) || isNaN(loanRate) || isNaN(loanTerm)) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Please make sure you are using numbers.'
+                                })
+                            } else if(totalPrincipal &lt;= 0 || loanTerm &lt;=0 || loanRate &lt;=0) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Only positive numbers are allowed.'
+                                })
+                            }else {
+
+                                let loanBalance = totalPrincipal;
+                                let monthlyPayment = calcMonthlyPayment(totalPrincipal, loanRate, loanTerm);
+                                let monthlyInterest = calcInterest(loanBalance, loanRate);
+                                let interest = monthlyInterest;
+                                let totalInterest = interest;
+                                let balance = totalPrincipal;
+                                finalPayment = monthlyPayment;
+
+                                for (let i = 1; i &lt;= loanTerm; i++) {
+                                    results = '';
+                                    if (i == 1) {
+                                        balance = balance - (monthlyPayment - interest)
+                                        results += `
+                                    &lt;tr&gt;
+                                        &lt;td&gt;${i}&lt;/td&gt;
+                                        &lt;td&gt;${formatNumber(monthlyPayment)}&lt;/td&gt;
+                                        &lt;td&gt;${formatNumber(monthlyPayment - interest)}&lt;/td&gt;
+                                        &lt;td&gt;${formatNumber(interest)}&lt;/td&gt;
+                                        &lt;td&gt;${formatNumber(totalInterest)}&lt;/td&gt;
+                                        &lt;td&gt;${formatNumber(balance)}&lt;/td&gt;
+                                    &lt;/tr&gt;`;
+                                        totalBalance = balance;
+                                    } else {
+                                        totalInterest += calcInterest(totalBalance, loanRate);
+                                        results += `
+                                    &lt;tr&gt;
+                                        &lt;td&gt;${i}&lt;/td&gt;
+                                        &lt;td&gt;${formatNumber(monthlyPayment)}&lt;/td&gt;
+                                        &lt;td&gt;${formatNumber(monthlyPayment - calcInterest(totalBalance, loanRate))}&lt;/td&gt;
+                                        &lt;td&gt;${formatNumber(calcInterest(totalBalance, loanRate))}&lt;/td&gt;
+                                        &lt;td&gt;${formatNumber(totalInterest)}&lt;/td&gt;
+                                        &lt;td&gt;${formatNumber(totalBalance - (monthlyPayment - calcInterest(totalBalance, loanRate)))}&lt;/td&gt;
+                                    &lt;/tr&gt;`
+                                        totalBalance -= (monthlyPayment - calcInterest(totalBalance, loanRate));
+                                    }
+                                    resultTable.innerHTML += results;
+                                }
+                                finalInterest = totalInterest;
+                                finalCost = totalPrincipal + finalInterest;
+                                principal = totalPrincipal;
+                            }
+                        }
+
+                        function buildSummary() {
+                            let paymentResult = document.getElementById('monthlyPayments');
+                            let principalResult = document.getElementById('totalPrincipal');
+                            let interestResult = document.getElementById('totalInterest');
+                            let costResult = document.getElementById('totalCost');
+
+                            paymentResult.innerHTML = formatNumber(finalPayment);
+                            principalResult.innerHTML = `${formatNumber(principal)}`;
+                            interestResult.innerHTML = `${formatNumber(finalInterest)}`;
+                            costResult.innerHTML = `&lt;strong&gt;${formatNumber(finalCost)}&lt;/strong&gt;`;
+                        }
+
+                        function formatNumber(number) {
+                            let myCurrency = {
+                                currency: "USD",
+                                style: "currency"
+                            };
+                            return number.toLocaleString('en-US', myCurrency);
                         }
                     </code>
                     </pre>
                 </div>
                 <div class="col">
-                    <p>The code is structured in three functions.</p>
+                    <p>The code is structured into a few functions.</p>
 
-                    <h5>getValues</h5>
+                    <h5>calcMonthlyPayment and calcInterest</h5>
                     <p>
-                        getValues accepts(gets) the user input from the page. It utilizes getElementById to pull the
-                        values
-                        from the page. It passes those values to the generateNumbers function. The function
-                        generateNumbers
-                        returns an array of values and passes that array to the displayNumbers function.
+                        calcMonthlyPayment() accepts three arguments, loanAmount, loanTerm, loanRate. It uses these three
+                        values to calculate our monthly payment.
                     </p>
-                    <p>After getting the values, we need to verify that they are actually numbers, we do this utilizing
-                        if statements and output a message if there is an error.
+                    <p>
+                        calcInterest() uses the arguments loanBalance, and loanRate to generate our interest.
                     </p>
 
-                    <h5>generateNumbers</h5>
+                    <h5>calculate</h5>
                     <p>
-                        generateNumbers takes in two parameters startValue and endValue. We create a variable
-                        (numberArray)
-                        that
-                        holds an array. A for loop is used to generate all of the numbers between startValue and
-                        endValue
+                        calculate() is used to call our main functions when a button is clicked.
                     </p>
 
-                    <h5>displayNumbers</h5>
+                    <h5>buildTable</h5>
                     <p>
-                        displayNumbers takes in one parameter numberArray. The variable numberArray is an array the
-                        holds values
-                        between startValue and endValue. We create a variable (className) that holds the name of a CSS
-                        class
-                        that we will use to bold the numbers. We create a variable templateRows that will hold the html
-                        we
-                        will write to the page.
+                        buildTable() initialises some variables and validates user input. Using a for loop, it builds an
+                        amoritization table from our inputs.
                     </p>
 
+                    <h5>buildSummary</h5>
                     <p>
-                        A for loop is used to check all of the numbers to see if they are even or odd. The remainder
-                        operator (%) is used to see if the number is divisable by two. If it returns zero the it is
-                        even. If
-                        not (else) its odd. The correct className is injected into the html row for display. Each
-                        interation
-                        of the loop adds to the teamplateRows variable. At the end of the loop the resulting HTML rows
-                        are
-                        written to the page.
+                        buildSummary() gets a handle on our summary section and populates it with our final values.
+                    </p>
+
+                    <h5>formatNumber</h5>
+                    <p>
+                        formatNumber() accepts a number and converts it into a readable currency format.
                     </p>
                 </div>
             </div>

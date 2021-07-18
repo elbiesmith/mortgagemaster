@@ -38,8 +38,19 @@
        min-height: 160px;
    }
 
+   .btn-grn {
+       background-color: #b8cfdc;
+       color: #142aab;
+       border-color: #142aab;
+   }
+   .btn-grn:hover {
+    background-color: #142aab;
+    color: #b8cfdc;
+    border-color: #b8cfdc;
+   }
+
    .txt-grn {
-       color: #68807A;
+       color: #142aab;
    }
 
    .table-text-size {

@@ -1,9 +1,3 @@
-// Total monthly payment (loanAmount) * (loanRate/1200)/(1-(1+loanRate/1200)(-loanTerm)
-// Remaining Balance BEFORE the first month it equals the amount of the loan
-// Interest Payment = Previous remaining balance * loanRate/1200
-// Prinicpal Payment = Total Monthly payment - interest payment
-// Remaining Balance AFTER each month, Previous Remaining Balance - principal payments.
-
 // payment Calculation (amount * (rate / 1200)) / (1 - Math.pow(1 + rate / 1200, -term));
 // interest Calculation balance * (rate / 1200);
 let finalCost = 0;
@@ -112,7 +106,7 @@ function formatNumber(number) {
     return number.toLocaleString('en-US', myCurrency);
 }
 
-function resetForm() {
-    let form = document.getElementById('loanForm');
-    form.reset();
-}
+// function resetForm() {
+//     let form = document.getElementById('loanForm');
+//     form.reset();
+// }
