@@ -35,19 +35,33 @@ function buildTable() {
     let loanRate = parseFloat(document.getElementById('loanRate').value);
     let loanTerm = parseInt(document.getElementById('loanTerm').value);
 
-    let loanBalance = totalPrincipal;
-    let monthlyPayment = calcMonthlyPayment(totalPrincipal, loanRate, loanTerm);
-    let monthlyInterest = calcInterest(loanBalance, loanRate);
-    let interest = monthlyInterest;
-    let totalInterest = interest;
-    let balance = totalPrincipal;
-    finalPayment = monthlyPayment;
+    if (isNaN(totalPrincipal) || isNaN(loanRate) || isNaN(loanTerm)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Please make sure you are using numbers.'
+        })
+    } else if(totalPrincipal <= 0 || loanTerm <=0 || loanRate <=0) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Only positive numbers are allowed.'
+        })
+    }else {
 
-    for (let i = 1; i <= loanTerm; i++){
-        results = '';
-        if (i == 1) {
-            balance = balance - (monthlyPayment - interest)
-            results += `
+        let loanBalance = totalPrincipal;
+        let monthlyPayment = calcMonthlyPayment(totalPrincipal, loanRate, loanTerm);
+        let monthlyInterest = calcInterest(loanBalance, loanRate);
+        let interest = monthlyInterest;
+        let totalInterest = interest;
+        let balance = totalPrincipal;
+        finalPayment = monthlyPayment;
+
+        for (let i = 1; i <= loanTerm; i++) {
+            results = '';
+            if (i == 1) {
+                balance = balance - (monthlyPayment - interest)
+                results += `
             <tr>
                 <td>${i}</td>
                 <td>${formatNumber(monthlyPayment)}</td>
@@ -56,25 +70,26 @@ function buildTable() {
                 <td>${formatNumber(totalInterest)}</td>
                 <td>${formatNumber(balance)}</td>
             </tr>`;
-            totalBalance = balance;
-        } else {
-            totalInterest += calcInterest(totalBalance, loanRate);
-            results += `
+                totalBalance = balance;
+            } else {
+                totalInterest += calcInterest(totalBalance, loanRate);
+                results += `
             <tr>
                 <td>${i}</td>
                 <td>${formatNumber(monthlyPayment)}</td>
                 <td>${formatNumber(monthlyPayment - calcInterest(totalBalance, loanRate))}</td>
                 <td>${formatNumber(calcInterest(totalBalance, loanRate))}</td>
                 <td>${formatNumber(totalInterest)}</td>
-                <td>${formatNumber(totalBalance- (monthlyPayment - calcInterest(totalBalance, loanRate)))}</td>
+                <td>${formatNumber(totalBalance - (monthlyPayment - calcInterest(totalBalance, loanRate)))}</td>
             </tr>`
-            totalBalance -= (monthlyPayment - calcInterest(totalBalance, loanRate));
+                totalBalance -= (monthlyPayment - calcInterest(totalBalance, loanRate));
+            }
+            resultTable.innerHTML += results;
         }
-        resultTable.innerHTML += results;
+        finalInterest = totalInterest;
+        finalCost = totalPrincipal + finalInterest;
+        principal = totalPrincipal;
     }
-    finalInterest = totalInterest;
-    finalCost = totalPrincipal + finalInterest;
-    principal = totalPrincipal;
 }
 
 function buildSummary() {
