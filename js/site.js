@@ -67,6 +67,7 @@ function buildTable() {
                 totalBalance = balance;
             } else {
                 totalInterest += calcInterest(totalBalance, loanRate);
+                
                 results += `
             <tr>
                 <td>${i}</td>
