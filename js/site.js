@@ -69,7 +69,7 @@ function buildTable() {
                 totalInterest += calcInterest(totalBalance, loanRate);
                 
                 results += `
-            <tr>
+            <tr id="${i}">
                 <td>${i}</td>
                 <td>${formatNumber(monthlyPayment)}</td>
                 <td>${formatNumber(monthlyPayment - calcInterest(totalBalance, loanRate))}</td>
